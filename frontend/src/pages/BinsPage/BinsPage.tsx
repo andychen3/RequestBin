@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { createBin } from "./services";
 import { generateBinId } from "./utils";
 
 const BinsPage = () => {
-  const urlInput = generateBinId();
+  const [urlInput, setUrlInput] = useState(generateBinId());
 
 
 
@@ -20,6 +21,7 @@ const BinsPage = () => {
               const response = await createBin(urlInput, authToken);
               localStorage.setItem(`basket_${urlInput}`, authToken);
               console.log(response);
+              setUrlInput(generateBinId());
             } catch (error) {
               alert("Failed to create a new bin.");
               console.error(error);
@@ -30,7 +32,7 @@ const BinsPage = () => {
           <input
             type="text"
             value={urlInput}
-            
+            onChange={(e) => setUrlInput(e.target.value)}
           />
           <button type="submit">Create New Bin</button>
         </form>
