@@ -18,9 +18,8 @@ const BinsPage = () => {
             e.preventDefault();
             try {
               const authToken = crypto.randomUUID();
-              const response = await createBin(urlInput, authToken);
+              await createBin(urlInput, authToken);
               localStorage.setItem(`basket_${urlInput}`, authToken);
-              console.log(response);
               setUrlInput(generateBinId());
             } catch (error) {
               alert("Failed to create a new bin.");
@@ -28,7 +27,6 @@ const BinsPage = () => {
             }
           }}
         >
-          
           <input
             type="text"
             value={urlInput}
@@ -36,6 +34,12 @@ const BinsPage = () => {
           />
           <button type="submit">Create New Bin</button>
         </form>
+          <h2>My Baskets</h2>
+          <ul>
+            {Object.keys(localStorage).map((key) => (
+              <li key={key}>{key.replace('basket_', '')}</li>
+            ))}
+          </ul>
 
         <Link to="/bins/123">Go to Bin 123</Link>
       </div>
