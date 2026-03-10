@@ -1,24 +1,11 @@
 import { ApiError } from '../errors.js';
 import type { Request } from 'express';
-import type { BinRequest, GetBinAPIResponse } from '../types.js';
+import type { RequestData,
+              BinRequest,
+              GetBinAPIResponse,
+              RequestWithBody } from '../types/types.js';
 
-interface RequestData {
-  method: string;
-  parameters: Record<string, unknown>;
-  headers: Record<string, unknown>;
-  body: unknown;
-}
-
-interface RequestWithBody {
-  id: string;
-  bin_id: string;
-  method: string;
-  parameters: Record<string, unknown>;
-  headers: Record<string, unknown>;
-  body_id: string;
-  created_at: Date;
-  body: unknown;  // from MongoDB
-}
+import db from '../services/db/index.js';
 
 const formatDbTimestamp = (timestamp: Date): string => (
   timestamp.toISOString().replace('T', ' ').slice(0, 19)
@@ -33,6 +20,10 @@ const parseRequestToDB = (req: Request): RequestData => {
     body = req.rawBody;
   }
 
+  if (body === undefined || body === '') {
+    body = {};
+  }
+
   return {
     method: req.method,
     parameters: req.params,
@@ -41,12 +32,12 @@ const parseRequestToDB = (req: Request): RequestData => {
   }
 }
 
-export const toBinRequest = (req: RequestWithBody): BinRequest => ({
+const toBinRequest = (req: RequestWithBody): BinRequest => ({
   method: req.method,
   created_at: formatDbTimestamp(req.created_at),
   headers: req.headers as Record<string, string>,
   params: req.parameters as Record<string, string>,
-  body: req.body as object | string | undefined,
+  body: req.body || {} as object | string,
 });
 
 export const saveRequestToBin = async (binRoute: string, req: Request): Promise<BinRequest> => {
@@ -56,7 +47,7 @@ export const saveRequestToBin = async (binRoute: string, req: Request): Promise<
     throw new ApiError(404, `Bin with route ${binRoute} not found.`);
   }
 
-  const dbRequestRecord = db.requests.create(bin.id, parseRequestToDB(req));
+  const dbRequestRecord = await db.requests.create(bin.id, parseRequestToDB(req));
   const apiRequest = toBinRequest(dbRequestRecord);
   return apiRequest;
 };
