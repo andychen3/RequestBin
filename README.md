@@ -9,8 +9,6 @@
 ```json
 {
   bin_route: 'abc123',
-  send_url: "/in/abc123",
-  view_url: "/bins/abc123",
   token: "sk_92fj3k1"
 }
 ```
@@ -25,11 +23,7 @@
   created_at: "2026-03-07 19:12:45",
   headers: { content-type: 'application/json' },
   params: { category: 'webhooks' },
-  body: {
-    raw: "...string...",
-    json: { ...json if available... },
-    content_type: __
-  }
+  body: json if available...fallbacks to string,
 }
 ```
 
@@ -40,7 +34,6 @@
 ```json
 {
   bin_route: 'abc123',
-  send_url: "/in/abc123",
   requests: [Request1, Request2, ...]
 }
 ```

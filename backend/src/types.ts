@@ -1,7 +1,5 @@
-export interface CreateBinResponse {
+export interface CreateBinAPIResponse {
   bin_route: string;
-  send_url: string;
-  view_url: string;
   token: string;
 }
 
@@ -9,16 +7,11 @@ export interface BinRequest {
   method: string;
   created_at: string;
   headers: Record<string, string>;
-  params: Record<string, string>;
-  body: {
-    raw: string;
-    json: object | null
-    content_type: string;
-  }
+  params: Record<string, string | string[] | undefined>;
+  body: object | string | undefined;
 }
 
-export interface GetBinResponse {
+export interface GetBinAPIResponse {
   bin_route: string;
-  send_url: string;
   requests: BinRequest[];
 }
