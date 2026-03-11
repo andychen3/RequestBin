@@ -32,9 +32,10 @@ const parseRequestToDB = (req: Request): RequestData => {
   }
 }
 
-const toBinRequest = (req: RequestWithBody): BinRequest => ({
+const toBinRequest = (req: RequestWithBody, binRoute: string): BinRequest => ({
   method: req.method,
   created_at: formatDbTimestamp(req.created_at),
+  path: `/in/${binRoute}`,
   headers: req.headers as Record<string, string>,
   params: req.parameters as Record<string, string>,
   body: req.body || {} as object | string,
@@ -48,7 +49,7 @@ export const saveRequestToBin = async (binRoute: string, req: Request): Promise<
   }
 
   const dbRequestRecord = await db.requests.create(bin.id, parseRequestToDB(req));
-  const apiRequest = toBinRequest(dbRequestRecord);
+  const apiRequest = toBinRequest(dbRequestRecord, binRoute);
   return apiRequest;
 };
 
@@ -70,6 +71,6 @@ export const getRequestsInBin = async (binRoute: string, req: Request): Promise<
   }
 
   const dbRequestRecords = await db.requests.getByBinRoute(binRoute);
-  const binRequests = dbRequestRecords.map(record => toBinRequest(record));
+  const binRequests = dbRequestRecords.map(record => toBinRequest(record, binRoute));
   return { bin_route: binRoute, requests: binRequests };
 }

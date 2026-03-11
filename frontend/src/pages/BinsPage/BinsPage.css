@@ -1,0 +1,24 @@
+.bins-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.bins-page__empty {
+  padding: 28px 20px;
+  border-radius: 16px;
+  border: 1px dashed #e5e7eb;
+  background-color: #f9fafb;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.bins-page__empty p {
+  margin: 0;
+}
+
+.bins-page__empty p:first-child {
+  font-weight: 500;
+  margin-bottom: 4px;
+}

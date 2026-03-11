@@ -55,8 +55,18 @@ const db = {
       return binQueries.getById(id);
     },
 
-    // Delete a bin and all its requests
+    // Delete a bin and all its requests (and their bodies from MongoDB)
     async delete(id: string): Promise<boolean> {
+      // Get all requests for this bin to find their body_ids
+      const requests = await requestQueries.getByBinId(id);
+
+      // Delete all bodies from MongoDB in batch
+      const bodyIds = requests.map(req => req.body_id);
+      if (bodyIds.length > 0) {
+        await BodyModel.deleteMany({ _id: { $in: bodyIds } });
+      }
+
+      // Delete the bin from PostgreSQL 
       return binQueries.delete(id);
     },
   },

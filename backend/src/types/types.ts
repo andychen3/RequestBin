@@ -6,6 +6,7 @@ export interface CreateBinAPIResponse {
 export interface BinRequest {
   method: string;
   created_at: string;
+  path: string;
   headers: Record<string, string>;
   params: Record<string, string | string[] | undefined>;
   body: object | string;

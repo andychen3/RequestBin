@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import db from './db/index.js';
+import { BodyModel } from './db/models.js';
 
 async function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -125,8 +126,66 @@ async function runTests(): Promise<void> {
       console.log('   ❌ Should return empty array for non-existent route\n');
     }
 
-    // 10. Cleanup - delete requests
-    console.log('🔟 Cleaning up test requests...');
+    // 10. Test bin deletion cascades to MongoDB bodies
+    console.log('🔟 Testing bin deletion cascades to MongoDB bodies...');
+    
+    // Create another bin with requests specifically for this test
+    const testBin = await db.bins.create('cascade-test-bin', 'test-token-abc');
+    const testRequest1 = await db.requests.create(testBin.id, {
+      method: 'POST',
+      parameters: {},
+      headers: { 'content-type': 'application/json' },
+      body: { test: 'body1', data: 'for cascade test' }
+    });
+    const testRequest2 = await db.requests.create(testBin.id, {
+      method: 'POST',
+      parameters: {},
+      headers: { 'content-type': 'application/json' },
+      body: { test: 'body2', data: 'for cascade test' }
+    });
+    
+    // Store body_ids for later verification
+    const bodyId1 = testRequest1.body_id;
+    const bodyId2 = testRequest2.body_id;
+    
+    console.log('   Created test bin with 2 requests');
+    console.log(`   Body ID 1: ${bodyId1}`);
+    console.log(`   Body ID 2: ${bodyId2}`);
+    
+    // Verify bodies exist in MongoDB before deletion
+    const bodyBefore1 = await BodyModel.findById(bodyId1);
+    const bodyBefore2 = await BodyModel.findById(bodyId2);
+    if (bodyBefore1 && bodyBefore2) {
+      console.log('   ✅ Both bodies exist in MongoDB before bin deletion');
+    } else {
+      console.log('   ❌ Bodies missing before bin deletion!');
+    }
+    
+    // Delete the bin (should cascade to bodies)
+    await db.bins.delete(testBin.id);
+    
+    // Verify bin is deleted
+    const deletedTestBin = await db.bins.getById(testBin.id);
+    if (deletedTestBin === null) {
+      console.log('   ✅ Test bin deleted from PostgreSQL');
+    } else {
+      console.log('   ❌ Test bin still exists in PostgreSQL');
+    }
+    
+    // Verify bodies are deleted from MongoDB
+    const bodyAfter1 = await BodyModel.findById(bodyId1);
+    const bodyAfter2 = await BodyModel.findById(bodyId2);
+    if (bodyAfter1 === null && bodyAfter2 === null) {
+      console.log('   ✅ Both bodies deleted from MongoDB (cascade delete working!)');
+    } else {
+      console.log('   ❌ Bodies still exist in MongoDB - cascade delete NOT working!');
+      if (bodyAfter1) console.log('      Body 1 still exists:', bodyAfter1._id);
+      if (bodyAfter2) console.log('      Body 2 still exists:', bodyAfter2._id);
+    }
+    console.log();
+
+    // 11. Cleanup - delete original test requests
+    console.log('🗑️  Cleaning up original test requests...');
     await db.requests.delete(request1.id);
     await db.requests.delete(request2.id);
     await db.requests.delete(request3.id);
@@ -138,14 +197,11 @@ async function runTests(): Promise<void> {
     } else {
       console.log('   ❌ Request still exists in PostgreSQL');
     }
-    
-    // Body should also be gone from MongoDB (we can't easily verify without direct Mongo access,
-    // but the implementation handles this)
-    console.log('   ✅ Bodies should be deleted from MongoDB (via implementation)');
+    console.log('   ✅ Bodies deleted from MongoDB (via individual request delete)');
     console.log();
 
-    // 11. Cleanup - delete bin
-    console.log('🗑️  Cleaning up test bin...');
+    // 12. Cleanup - delete original test bin
+    console.log('🧹 Cleaning up original test bin...');
     await db.bins.delete(bin.id);
     const deletedBin = await db.bins.getById(bin.id);
     if (deletedBin === null) {

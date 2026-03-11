@@ -1,0 +1,127 @@
+.create-bin {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.create-bin__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.create-bin__brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-bin__brand-icon-svg {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+}
+
+.create-bin__brand-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.create-bin__brand-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.create-bin__section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #9ca3af;
+  font-weight: 600;
+  margin: 12px 0 18px;
+}
+
+.create-bin__form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.create-bin__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.create-bin__label-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+.create-bin__input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #111827;
+  background-color: #ffffff;
+  box-shadow: 0 1px 1px rgba(15, 23, 42, 0.04);
+}
+
+.create-bin__input::placeholder {
+  color: #9ca3af;
+}
+
+.create-bin__input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.create-bin__button {
+  margin-top: 8px;
+  width: 100%;
+  border-radius: 0.9rem;
+  border: none;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #4f46e5;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.create-bin__button:hover:not(:disabled) {
+  opacity: 1;
+  background-color: #4338ca;
+  transform: translateY(-1px);
+}
+
+.create-bin__button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.create-bin__button:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.create-bin__button-icon {
+  width: 16px;
+  height: 16px;
+}

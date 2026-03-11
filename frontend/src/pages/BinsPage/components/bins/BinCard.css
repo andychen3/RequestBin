@@ -1,0 +1,113 @@
+.bin-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.15s ease;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08),
+    0 2px 4px -2px rgba(15, 23, 42, 0.06);
+}
+
+.bin-card:hover {
+  border-color: #3730a3;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.15),
+    0 4px 6px -4px rgba(15, 23, 42, 0.08);
+}
+
+.bin-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.bin-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bin-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background-color: rgba(79, 70, 229, 0.08);
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bin-card__icon-svg {
+  width: 24px;
+  height: 24px;
+  color: #4f46e5;
+}
+
+.bin-card__title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.bin-card__path {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #4f46e5;
+  background-color: #eef2ff;
+  padding: 3px 6px;
+  border-radius: 999px;
+  border: 1px solid #e0e7ff;
+}
+
+.bin-card__delete {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.bin-card__delete:hover {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.12);
+}
+
+.bin-card__delete-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.bin-card__open {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: none;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  background-color: #f9fafb;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.bin-card__open:hover {
+  background-color: #e5e7eb;
+}
+
+.bin-card__open-icon {
+  width: 14px;
+  height: 14px;
+}

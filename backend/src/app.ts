@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import type { Request, Response, NextFunction } from 'express';
 import { ApiError } from './errors.js';
-import { createBin } from './services/bins.js';
+import { createBin, deleteBin } from './services/bins.js';
 import { saveRequestToBin, getRequestsInBin } from './services/requests.js';
 
 const app = express();
@@ -30,7 +30,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 // create bin
 app.post('/bins', async (req: Request, res: Response) => {
-    const createBinResponse = await createBin();
+    const { bin_route, token } = req.body ?? {};
+
+    const createBinResponse = await createBin(bin_route, token);
     res.status(201).json(createBinResponse);
 });
 
@@ -51,7 +53,10 @@ app.get('/bins/:binRoute', async (req, res) => {
 });
 
 app.delete('/bins/:binRoute', async (req, res) => {
+  const binRoute = req.params.binRoute;
 
+  await deleteBin(binRoute, req);
+  res.sendStatus(204);
 });
 
 export default app;
