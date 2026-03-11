@@ -7,9 +7,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: {
-      '/bins': 'http://localhost:3000',
-      '/in': 'http://localhost:3000',
-    }
+  proxy: {
+    '/api': {
+      target: 'http://localhost:3000',
+      rewrite: (path) => path.replace(/^\/api/, ''),
+    },
+    '/in': 'http://localhost:3000',
   }
+}
 })

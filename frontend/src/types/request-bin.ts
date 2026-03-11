@@ -13,3 +13,10 @@ export interface CreateBinPayload {
   token: string;
 }
 
+export interface BinRequest {
+  method: string;
+  created_at: string;
+  headers: Record<string, string>;
+  params: Record<string, string>;
+  body: Record<string, unknown>;
+}
