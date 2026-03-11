@@ -19,14 +19,4 @@ const createBin = async (url: string, authToken: string): Promise<Bin> => {
   }
 };
 
-// const createBin = async () => {
-//   try {
-//     const response = await axios.post(`${API_BASE_URL}/bins`, {});
-//     return response.data;
-//   } catch (error) {
-//     console.error("Failed to create a new bin.", error);
-//     throw error;
-//   }
-// };
-
 export { createBin };
