@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBin, deleteBin } from "./services";
 import type { Bin } from "../../types/request-bin";
@@ -7,57 +7,24 @@ import { BinPageLayout } from "./components/layout/BinPageLayout";
 import { PageHeader } from "./components/layout/PageHeader";
 import { CreateBinPanel } from "./components/bins/CreateBinPanel";
 import { BinCard } from "./components/bins/BinCard";
+import { BINS_STORAGE_PREFIX, useBinOrder } from "./hooks/useBinOrder";
 import "./BinsPage.css";
 
-const BINS_STORAGE_PREFIX = "basket_";
-const BINS_ORDER_KEY = "basket_order";
 type BinRoute = Bin["bin_route"];
 
 const BinsPage = () => {
   const [urlInput, setUrlInput] = useState<BinRoute>(generateBinId());
   const [isCreating, setIsCreating] = useState(false);
   const [binsVersion, setBinsVersion] = useState(0);
-  const [binOrder, setBinOrder] = useState<BinRoute[]>([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const stored = localStorage.getItem(BINS_ORDER_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setBinOrder(parsed);
-          return;
-        }
-      } catch (error) {
-        console.warn("Failed to parse bin order from storage.", error);
-      }
-    }
-
-    const fallback = Object.keys(localStorage)
-      .filter((key) => key.startsWith(BINS_STORAGE_PREFIX))
-      .map((key) => key.replace(BINS_STORAGE_PREFIX, ""));
-    setBinOrder(fallback);
-  }, []);
-
-  const persistOrder = (order: BinRoute[]) => {
-    localStorage.setItem(BINS_ORDER_KEY, JSON.stringify(order));
-  };
-
-  const orderedBins: BinRoute[] = binOrder.filter((id) =>
-    localStorage.getItem(`${BINS_STORAGE_PREFIX}${id}`),
-  );
+  const { orderedBins, addBin, removeBin } = useBinOrder();
 
   const handleCreateBin = async (): Promise<void> => {
     try {
       setIsCreating(true);
       const response = await createBin(urlInput);
       localStorage.setItem(`${BINS_STORAGE_PREFIX}${urlInput}`, response.token);
-      setBinOrder((order) => {
-        const next = [...order, urlInput];
-        persistOrder(next);
-        return next;
-      });
+      addBin(urlInput);
       setUrlInput(generateBinId());
       setBinsVersion((version) => version + 1);
     } catch (error: unknown) {
@@ -83,11 +50,7 @@ const BinsPage = () => {
     try {
       await deleteBin(binId, token);
       localStorage.removeItem(storageKey);
-      setBinOrder((order) => {
-        const next = order.filter((id) => id !== binId);
-        persistOrder(next);
-        return next;
-      });
+      removeBin(binId);
       setBinsVersion((version) => version + 1);
     } catch (error) {
       alert("Failed to delete bin.");
