@@ -15,6 +15,7 @@ export interface CreateBinPayload {
 
 export interface BinRequest {
   method: string;
+  path: string;
   created_at: string;
   headers: Record<string, string>;
   params: Record<string, string>;
