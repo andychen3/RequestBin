@@ -46,10 +46,7 @@ const BinViewPage = () => {
   return (
     <div className="bin-view-page">
       <div className="bin-view-container">
-        <Link
-          to="/"
-          style={{ color: "#64748b", textDecoration: "none", fontSize: "14px" }}
-        >
+        <Link to="/" className="bin-view-back-link">
           ← Back to Bins
         </Link>
         {/* Title + status */}
