@@ -1,17 +1,15 @@
 import axios from "axios";
 import type { Bin, CreateBinPayload } from "../../types/request-bin";
 
-const API_BASE_URL = "http://localhost:3000";
+type BinRoute = Bin["bin_route"];
+type BinToken = Bin["token"];
 
-// const apiClient =
-
-const createBin = async (url: string, authToken: string): Promise<Bin> => {
+const createBin = async (url: BinRoute): Promise<Bin> => {
   try {
     const payload: CreateBinPayload = {
       bin_route: url,
-      token: authToken,
     };
-    const response = await axios.post<Bin>(`${API_BASE_URL}/bins`, payload);
+    const response = await axios.post<Bin>("api/bins", payload);
     return response.data;
   } catch (error) {
     console.error("Failed to create a new bin.", error);
@@ -19,4 +17,18 @@ const createBin = async (url: string, authToken: string): Promise<Bin> => {
   }
 };
 
-export { createBin };
+const deleteBin = async (
+  binRoute: BinRoute,
+  token: BinToken,
+): Promise<void> => {
+  try {
+    await axios.delete(`api/bins/${binRoute}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    console.error("Failed to delete bin.", error);
+    throw error;
+  }
+};
+
+export { createBin, deleteBin };

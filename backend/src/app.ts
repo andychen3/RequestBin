@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import type { Request, Response, NextFunction } from 'express';
+import { WebSocket } from 'ws';
 import { ApiError } from './errors.js';
 import { createBin, deleteBin } from './services/bins.js';
 import { saveRequestToBin, getRequestsInBin } from './services/requests.js';
@@ -28,10 +29,28 @@ app.post('/bins', async (req: Request, res: Response) => {
 });
 
 // collect webhook request into bin
+// broadcast to websocket subscribers
 app.all('/in/:binRoute', async (req: Request< { binRoute: string }>, res: Response) => {
   const binRoute = req.params.binRoute;
 
-  await saveRequestToBin(binRoute, req);
+  const savedRequest = await saveRequestToBin(binRoute, req);
+
+  const sockets = req.app.ws?.subscriptions.get(binRoute);
+  if (sockets && sockets.size > 0) {
+    const message = JSON.stringify({
+      bin_route: binRoute,
+      request: savedRequest
+    });
+
+    for (const ws of sockets) {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(message);
+      } else {
+        sockets.delete(ws);
+      }
+    }
+  }
+
   res.sendStatus(204);
 });
 
